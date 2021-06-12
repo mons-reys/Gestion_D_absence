@@ -22,8 +22,12 @@
 
 	<div>
 		<h3>Student Absence</h3>
-		
 	</div>
+	
+	<div>
+		<h5>Annee: ${currentInscriptionModel.getAnnee()} </h5>
+	</div>
+	
 	
 		<table class="table">
 		  <thead>
@@ -35,7 +39,7 @@
 		      <th scope="col">type saisie</th>
 		      <th scope="col">type seance</th>
 		      <th scope="col">matiere</th>
-		      
+		      <th scope="col">Professeur</th>
 		    </tr>
 		  </thead>
 		  <tbody>
@@ -46,12 +50,26 @@
 					<td><c:out value="${a.dateHeureFinAbsence}" /></td>
 					<td><c:out value="${a.etat}" /></td>
 					<td><c:out value="${a.typeSaisie}" /></td>
-					<td><c:out value="${a.etat}" /></td>
-					<td><c:out value="${a.etat}" /></td>
+					<td><c:out value="${a.getTypeSeance().alias}" /></td>
+					<td><c:out value="${a.getMatiere().nom}" /></td>
+					<td>Mr.<c:out value="${a.getObservateur().nom}" /></td>
 				</tr>
 			</c:forEach>
 		  </tbody>
 		</table>
+		
+		
+		<div>
+			<h6>Choisir une annee</h6>
+		</div>
+		<div class="list-group">
+		
+		<c:forEach items="${inscriptionsModel}" var="a">
+				<a href="${pageContext.request.contextPath}/student/getAbsence/${userInfo.idPersonne}" class="list-group-item list-group-item-action" aria-current="true">
+		   		 ${a.annee}
+		  </a>
+			</c:forEach>
+		</div>
 			
      
 

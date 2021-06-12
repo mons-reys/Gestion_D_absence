@@ -1,6 +1,7 @@
 package com.ensah.core.web.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -21,16 +22,23 @@ import com.ensah.core.bo.CadreAdministrateur;
 import com.ensah.core.bo.Enseignant;
 import com.ensah.core.bo.Etudiant;
 import com.ensah.core.bo.Inscription;
+import com.ensah.core.bo.TypeSeance;
 import com.ensah.core.bo.Utilisateur;
 import com.ensah.core.services.IEtudiantService;
 import com.ensah.core.services.IInscriptionService;
 import com.ensah.core.services.IPersonService;
+import com.ensah.core.services.ITypeSeanceService;
+import com.ensah.core.utils.User;
 import com.ensah.core.web.models.AccountModel;
 import com.ensah.core.web.models.PersonModel;
+import com.ensah.core.web.models.UserAndAccountInfos;
 
 @Controller
 @RequestMapping("/student")
 public class EtudiantController {
+	
+	//user inforamtion
+	private User user;
 	
 	@Autowired
 	private IPersonService personService;
@@ -40,6 +48,9 @@ public class EtudiantController {
 	
 	@Autowired
 	private IEtudiantService etudiantService;
+	
+	@Autowired
+	private ITypeSeanceService typeSeanceService;
 	
 	
 	//send date to the service to update it 
@@ -117,13 +128,34 @@ public class EtudiantController {
 		@RequestMapping(value = "getAbsence/{idPerson}", method = RequestMethod.GET)
 		public String getAbsence1(@PathVariable int idPerson, Model model) {
 			
-			
+			//charger l'inscription par idEtudiant + annee
 			 Inscription currentInscription = inscriptionService.getInscriptionByIdEtudiantEtAnnee(String.valueOf(idPerson), 2020);
 			 
-			
+			//get absence par cette inscription
 			Set<Absence> abs =currentInscription.getAbsences();
 			
+			//charger le type de seance
+			Map<Absence ,TypeSeance> AT = null;
+			
+			/*for(Absence ab: abs) {
+				AT.put(ab, ab.getTypeSeance());
+				ab.getObservateur();
+			}*/
+			
+			
+			//passer au view
 			model.addAttribute("absenceModel", abs);
+			
+			
+			
+			//get all inscriptions
+			 List<Inscription> inscriptions = inscriptionService.getInscriptionByIdEtudiant(String.valueOf(idPerson));
+			
+			model.addAttribute("currentInscriptionModel", currentInscription);
+			
+			model.addAttribute("inscriptionsModel", inscriptions);
+			
+			/*model.addAttribute("typeSeanceModel", AT);*/
 			
 
 			return "student/myAbsence";

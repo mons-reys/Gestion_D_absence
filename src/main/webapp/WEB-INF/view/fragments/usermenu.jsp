@@ -19,16 +19,13 @@
 
 		<li class="nav-item dropdown"><a class="nav-link dropdown-toggle"
 			href="#" id="navbarScrollingDropdown" role="button"
-			data-bs-toggle="dropdown" aria-expanded="false">Account
-				Management </a>
+			data-bs-toggle="dropdown" aria-expanded="false">Mes absences</a>
 			<ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
 			
 				<li class="dropdown-item"><a class="nav-link"
-					href="${pageContext.request.contextPath}/admin/createAccounts">Create
-						Accounts</a></li>
+					href="${pageContext.request.contextPath}/student/getAbsence/${userInfos.idPersonne}">Consulter l'absence</a></li>
 				<li class="dropdown-item"><a class="nav-link"
-					href="${pageContext.request.contextPath}/admin/manageAccounts">List
-						Accounts</a></li>
+					href="${pageContext.request.contextPath}/student/manageAccounts">Envoyer une demande d'absence</a></li>
 			
 
 			</ul></li>
