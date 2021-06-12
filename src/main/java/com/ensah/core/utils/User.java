@@ -14,6 +14,10 @@ public class User {
 	@Autowired
 	private HttpSession httpSession;
 
+	public User(HttpSession httpSession) {
+		this.httpSession = httpSession;
+	}
+
 	/**
 	 * Récupère les données de l'utilisateur connecté du contexte de securité et le
 	 * stocke dans un objet personnalisé à enregistrer dans la session http

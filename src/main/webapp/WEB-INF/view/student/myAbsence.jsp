@@ -40,6 +40,7 @@
 		      <th scope="col">type seance</th>
 		      <th scope="col">matiere</th>
 		      <th scope="col">Professeur</th>
+		       <th scope="col">Operation</th>
 		    </tr>
 		  </thead>
 		  <tbody>
@@ -53,6 +54,12 @@
 					<td><c:out value="${a.getTypeSeance().alias}" /></td>
 					<td><c:out value="${a.getMatiere().nom}" /></td>
 					<td>Mr.<c:out value="${a.getObservateur().nom}" /></td>
+					<td>
+						<ul>
+							<li><a
+								href="${pageContext.request.contextPath}/student/Reclamation/${userInfo.idPersonne}/${a.idAbsence}">Effectuer une reclamation</a></li>
+						</ul>
+					</td>
 				</tr>
 			</c:forEach>
 		  </tbody>
@@ -60,12 +67,11 @@
 		
 		
 		<div>
-			<h6>Choisir une annee</h6>
+			<h6>Choisir une année</h6>
 		</div>
 		<div class="list-group">
-		
 		<c:forEach items="${inscriptionsModel}" var="a">
-				<a href="${pageContext.request.contextPath}/student/getAbsence/${userInfo.idPersonne}" class="list-group-item list-group-item-action" aria-current="true">
+				<a href="${pageContext.request.contextPath}/student/getAbsence/${userInfo.idPersonne}/${a.annee}" class="list-group-item list-group-item-action" aria-current="true">
 		   		 ${a.annee}
 		  </a>
 			</c:forEach>

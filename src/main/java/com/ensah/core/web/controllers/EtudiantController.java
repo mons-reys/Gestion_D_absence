@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.ensah.core.bo.Absence;
 import com.ensah.core.bo.CadreAdministrateur;
+import com.ensah.core.bo.Compte;
 import com.ensah.core.bo.Enseignant;
 import com.ensah.core.bo.Etudiant;
 import com.ensah.core.bo.Inscription;
+import com.ensah.core.bo.Message;
 import com.ensah.core.bo.TypeSeance;
 import com.ensah.core.bo.Utilisateur;
 import com.ensah.core.services.IEtudiantService;
@@ -30,6 +33,7 @@ import com.ensah.core.services.IPersonService;
 import com.ensah.core.services.ITypeSeanceService;
 import com.ensah.core.utils.User;
 import com.ensah.core.web.models.AccountModel;
+import com.ensah.core.web.models.MessageModel;
 import com.ensah.core.web.models.PersonModel;
 import com.ensah.core.web.models.UserAndAccountInfos;
 
@@ -38,7 +42,8 @@ import com.ensah.core.web.models.UserAndAccountInfos;
 public class EtudiantController {
 	
 	//user inforamtion
-	private User user;
+	@Autowired
+	private HttpSession httpSession;
 	
 	@Autowired
 	private IPersonService personService;
@@ -51,6 +56,8 @@ public class EtudiantController {
 	
 	@Autowired
 	private ITypeSeanceService typeSeanceService;
+	
+	
 	
 	
 	//send date to the service to update it 
@@ -134,8 +141,7 @@ public class EtudiantController {
 			//get absence par cette inscription
 			Set<Absence> abs =currentInscription.getAbsences();
 			
-			//charger le type de seance
-			Map<Absence ,TypeSeance> AT = null;
+			
 			
 			/*for(Absence ab: abs) {
 				AT.put(ab, ab.getTypeSeance());
@@ -155,18 +161,93 @@ public class EtudiantController {
 			
 			model.addAttribute("inscriptionsModel", inscriptions);
 			
+			
+			//charger les donnee de l'utilisateur connecter
+			User user = new User(this.httpSession);
+			UserAndAccountInfos infoUser = user.getUserAccount();
+			model.addAttribute("userInfo", infoUser);
+			
+			
 			/*model.addAttribute("typeSeanceModel", AT);*/
 			
 
 			return "student/myAbsence";
 		}
+		
+		
+		
+		//get absence
+		//update data in the view
+			@RequestMapping(value = "getAbsence/{idPerson}/{annee}", method = RequestMethod.GET)
+			public String getAbsence2(@PathVariable int idPerson, @PathVariable int annee, Model model) {
+				
+				//charger l'inscription par idEtudiant + annee
+				 Inscription currentInscription = inscriptionService.getInscriptionByIdEtudiantEtAnnee(String.valueOf(idPerson),Integer.valueOf(annee));
+				 
+				//get absence par cette inscription
+				Set<Absence> abs = currentInscription.getAbsences();
+				
+				
+				//passer au view
+				model.addAttribute("absenceModel", abs);
+				
+				
+				//--pour charger la list des choix des annees d'absence---
+				//get all inscriptions
+				 List<Inscription> inscriptions = inscriptionService.getInscriptionByIdEtudiant(String.valueOf(idPerson));
+				
+				model.addAttribute("currentInscriptionModel", currentInscription);
+				
+				model.addAttribute("inscriptionsModel", inscriptions);
+				
+				
+				//charger les donnee de l'utilisateur connecter pour reutiliser dans les liens des annees
+				User user = new User(this.httpSession);
+				UserAndAccountInfos infoUser = user.getUserAccount();
+				model.addAttribute("userInfo", infoUser);
+					
+				return "student/myAbsence";
+			}
 	
-	
-	
+			
+			
+			@RequestMapping(value = "reclamation/{idPerson}/{idAbsence}", method = RequestMethod.GET)
+			public String reclamationHandler(@PathVariable int idPerson, @PathVariable int idAbsence, Model model) {
+				model.addAttribute("messageModel", new MessageModel());
+				return "student/reclamation";
+			}
+			
+			
+			
+			 
+			@RequestMapping("addReclamation/{idPerson}/{idAbsence}")
+			 public String addReclamation( @PathVariable int idPerson, @PathVariable int idAbsence , @Valid @ModelAttribute("messageModel") MessageModel reclamation,
+				      Model model,  BindingResult result) {
+				        if (result.hasErrors()) {
+				            return "error";
+				        }
+				        
+				        //save the reclamation as message 
+				        System.out.println(reclamation.getTexte());
+				        
+				    
+				        Message msg = new Message();
+				        //pass data from model to Message class
+				        msg.setTexte(reclamation.getTexte());
+				        //get expiditeur by id 
+				        
+				        
+						
+						System.out.println(msg.getTexte());
+							
+				        model.addAttribute("messageModel", new MessageModel());
+
+				        return "student/reclamation";
+				    }
+
 	
 		
-	
-	
+			
 
 	
 
