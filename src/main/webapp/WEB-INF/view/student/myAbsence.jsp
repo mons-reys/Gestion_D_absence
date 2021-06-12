@@ -25,26 +25,34 @@
 		
 	</div>
 	
-		id :   ${userInscirption.idInscription} 	<br>
-		
-		
-		
-		<c:forEach items="${inscriptionModel}" var="a">
+		<table class="table">
+		  <thead>
+		    <tr>
+		      <th scope="col">#</th>
+		      <th scope="col">debut </th>
+		      <th scope="col">fin</th>
+		      <th scope="col">etat</th>
+		      <th scope="col">type saisie</th>
+		      <th scope="col">type seance</th>
+		      <th scope="col">matiere</th>
+		      
+		    </tr>
+		  </thead>
+		  <tbody>
+		  <c:forEach items="${absenceModel}" var="a">
 				<tr>
-					<td><c:out value="${a.annee}" /></td>
+					<td><c:out value="${a.idAbsence}" /></td>
+					<td><c:out value="${a.dateHeureDebutAbsence}" /></td>
+					<td><c:out value="${a.dateHeureFinAbsence}" /></td>
+					<td><c:out value="${a.etat}" /></td>
+					<td><c:out value="${a.typeSaisie}" /></td>
+					<td><c:out value="${a.etat}" /></td>
 					<td><c:out value="${a.etat}" /></td>
 				</tr>
-
-		</c:forEach>
-			
-			
-			<c:forEach items="${absenceModel}" var="a">
-				<tr>
-					<td><c:out value="${a.dateHeureDebutAbsence}" /></td>
-				</tr>
-
 			</c:forEach>
-		
+		  </tbody>
+		</table>
+			
      
 
 

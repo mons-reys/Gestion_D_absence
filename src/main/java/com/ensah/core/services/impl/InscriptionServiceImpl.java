@@ -21,14 +21,13 @@ public class InscriptionServiceImpl implements IInscriptionService {
 	private IInscriptionDao inscriptionDao;
 
 	
-	public Inscription getInscriptionByIdEtudiant(String idEtudiant) {
+	public List<Inscription> getInscriptionByIdEtudiant(String idEtudiant) {
 		List<Inscription> u = inscriptionDao.getEntityByColValue("Inscription", "idEtudiant", idEtudiant);
 		if (u != null && u.size() != 0) {
-			return inscriptionDao.getEntityByColValue("Inscription", "idEtudiant", idEtudiant).get(0);
+			return inscriptionDao.getEntityByColValue("Inscription", "idEtudiant", idEtudiant);
 		}
-
+		
 		return null;
-
 	}
 
 	
@@ -105,6 +104,20 @@ public class InscriptionServiceImpl implements IInscriptionService {
 	@Override
 	public Inscription getInscriptionByAnnee(long annee) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+
+	@Override
+	public Inscription getInscriptionByIdEtudiantEtAnnee(String idEtudiant, long annee) {
+		//get by id etudiant
+		List<Inscription> inscriptions = this.getInscriptionByIdEtudiant(idEtudiant);
+		
+		//filtere les resultat par annee
+		for(Inscription ins: inscriptions) {
+			if(ins.getAnnee() == annee) return ins;
+		}
 		return null;
 	}
 

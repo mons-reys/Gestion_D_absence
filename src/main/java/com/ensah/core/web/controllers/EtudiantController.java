@@ -118,24 +118,12 @@ public class EtudiantController {
 		public String getAbsence1(@PathVariable int idPerson, Model model) {
 			
 			
-			//get the current etudiant by id
-			Etudiant etd = etudiantService.getEtudiantById(Long.valueOf(idPerson));
+			 Inscription currentInscription = inscriptionService.getInscriptionByIdEtudiantEtAnnee(String.valueOf(idPerson), 2020);
+			 
 			
-			//get list of inscription of the current etd 
-			List<Inscription> inscriptions =  etd.getInscriptions();
+			Set<Absence> abs =currentInscription.getAbsences();
 			
-			Inscription currentInscription = filterInscriptionsByAnnee((long) 2021, inscriptions);
-			
-			System.out.println(currentInscription);
-			
-			Set<Absence> abs2 =currentInscription.getAbsences();
-			//get absence 
-			Set<Absence> abs = inscriptions.get(0).getAbsences();
-			
-			
-			//show data
-			model.addAttribute("inscriptionModel", inscriptions);
-			model.addAttribute("absenceModel", abs2);
+			model.addAttribute("absenceModel", abs);
 			
 
 			return "student/myAbsence";

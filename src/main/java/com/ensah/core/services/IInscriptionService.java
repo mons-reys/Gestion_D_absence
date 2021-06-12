@@ -16,11 +16,14 @@ public interface IInscriptionService {
 
 	public Inscription getInscriptionById(Long id);
 	
+	
 	public Inscription getInscriptionByAnnee(long annee);
 	
 	public ExcelExporter prepareInscriptionExport(List<Inscription> Inscriptions);
 	
-	public Inscription getInscriptionByIdEtudiant(String idEtudiant);
+	public List<Inscription> getInscriptionByIdEtudiant(String idEtudiant);
+	
+	public Inscription getInscriptionByIdEtudiantEtAnnee(String idEtudiant, long annee);
 	
 	
 
