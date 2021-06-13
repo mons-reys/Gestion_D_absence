@@ -1,10 +1,8 @@
 package com.ensah.core.web.controllers;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
@@ -15,29 +13,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.ensah.core.bo.Absence;
-import com.ensah.core.bo.CadreAdministrateur;
 import com.ensah.core.bo.Compte;
-import com.ensah.core.bo.Enseignant;
+import com.ensah.core.bo.Conversation;
 import com.ensah.core.bo.Etudiant;
 import com.ensah.core.bo.Inscription;
 import com.ensah.core.bo.Message;
-import com.ensah.core.bo.TypeSeance;
 import com.ensah.core.bo.Utilisateur;
 import com.ensah.core.services.ICompteService;
-import com.ensah.core.services.IEtudiantService;
+import com.ensah.core.services.IConversationService;
 import com.ensah.core.services.IInscriptionService;
 import com.ensah.core.services.IMessageService;
 import com.ensah.core.services.IPersonService;
-import com.ensah.core.services.ITypeSeanceService;
 import com.ensah.core.utils.User;
-import com.ensah.core.web.models.AccountModel;
 import com.ensah.core.web.models.MessageModel;
 import com.ensah.core.web.models.PersonModel;
 import com.ensah.core.web.models.UserAndAccountInfos;
@@ -59,11 +52,14 @@ public class EtudiantController {
 	@Autowired
 	private ICompteService compteService;
 	
-	@Autowired
-	private ITypeSeanceService typeSeanceService;
+	
 	
 	@Autowired
 	private IMessageService messageService;
+	
+	@Autowired
+	private IConversationService conversationService;
+	
 	
 	
 	
@@ -75,7 +71,6 @@ public class EtudiantController {
 
 		// En cas d'erreur
 		if (bindingResult.hasErrors()) {
-
 			return "student/updateForm";
 		}
 
@@ -151,12 +146,6 @@ public class EtudiantController {
 			
 			
 			
-			/*for(Absence ab: abs) {
-				AT.put(ab, ab.getTypeSeance());
-				ab.getObservateur();
-			}*/
-			
-			
 			//passer au view
 			model.addAttribute("absenceModel", abs);
 			
@@ -219,23 +208,29 @@ public class EtudiantController {
 	
 			
 			
-			@RequestMapping(value = "reclamation/{idPerson}/{idAbsence}", method = RequestMethod.GET)
-			public String reclamationHandler(@PathVariable int idPerson, @PathVariable int idAbsence, Model model) {
+			@RequestMapping(value = "reclamation/{idPerson}/{idEnseignant}/{idConversation}", method = RequestMethod.GET)
+			public String reclamationHandler(@PathVariable int idPerson, @PathVariable int idEnseignant, @PathVariable int idConversation, Model model) {
+				
+				//show the conversation
+				
+				
+				
 				model.addAttribute("messageModel", new MessageModel());
 				model.addAttribute("idPersonModel", idPerson);
-				model.addAttribute("idAbsenceModel", idAbsence);
+				model.addAttribute("idEnseignantModel", idEnseignant);
 				
 				return "student/reclamation";
 			}
-			
 			
 			
 			 
 			@RequestMapping("addReclamation")
 			 public String addReclamation(@Valid @ModelAttribute("messageModel") MessageModel reclamation,
 				      Model model,  BindingResult result) {
+				
+						//error case 
 				        if (result.hasErrors()) {
-				            return "error";
+				        	return "student/reclamation";
 				        }
 				        
 				        //save the reclamation as message 
@@ -243,10 +238,27 @@ public class EtudiantController {
 				        System.out.println(reclamation.getExpediteurId());
 				        
 				        
+				        
+				        
 				        //get expediteur & destinataire account 
 				        Compte expediteur = compteService.getAccountById(Long.valueOf(reclamation.getExpediteurId()));
 				        Compte destinataire = compteService.getAccountById(Long.valueOf(reclamation.getDestinataireId()));
-				   
+				        
+				        //create a conversation
+				        Conversation conversation = new Conversation();
+				        
+				        //set values for the conversation
+				        conversation.setEtat(0);
+				        conversation.setCreateurConversation(expediteur);
+				        conversation.setTitre("reclamation d'absence");
+				        conversation.setType("reclamation");
+				        
+				        //add participant to the list 
+				        List<Compte> participants = new ArrayList<Compte>();
+				        participants.add(expediteur);
+				        participants.add(destinataire);
+				        conversation.setParticipant(participants);
+				        
 				        //create a new message 
 				        Message msg = new Message();
 				        
@@ -256,14 +268,24 @@ public class EtudiantController {
 				        msg.setDestinataire(destinataire);
 				        msg.setDateHeure(new Date());
 				        
+				        
+				        //set the message to the conversation
+				        List<Message> messages = new ArrayList<Message>();
+				        messages.add(msg);
+				        conversation.setMessages(messages);
+				        
 				        //save the record
+				        conversationService.addConversation(conversation);
 				        messageService.addMessage(msg);
 				        
-				        
-						
+				     
+
 						System.out.println(msg.toString());
 							
 				        model.addAttribute("messageModel", new MessageModel());
+				        
+				     // Mettre le message de succès dans le modèle
+						model.addAttribute("msg", "Opération effectuée avec succès");
 
 				        return "student/reclamation";
 				    }

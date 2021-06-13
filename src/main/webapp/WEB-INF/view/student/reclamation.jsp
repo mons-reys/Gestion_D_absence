@@ -39,7 +39,7 @@
 
 				<f:hidden path="expediteurId" value="${idPersonModel}" />
 				
-				<f:hidden path="destinataireId"  value="${idAbsenceModel}" />
+				<f:hidden path="destinataireId"  value="${idEnseignantModel}" />
 				
 				
 				<div class="col">
