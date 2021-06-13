@@ -208,13 +208,15 @@ public class EtudiantController {
 	
 			
 			
-			@RequestMapping(value = "reclamation/{idPerson}/{idEnseignant}/{idConversation}", method = RequestMethod.GET)
-			public String reclamationHandler(@PathVariable int idPerson, @PathVariable int idEnseignant, @PathVariable int idConversation, Model model) {
+			@RequestMapping(value = "reclamation/{idPerson}/{idEnseignant}", method = RequestMethod.GET)
+			public String reclamationHandler(@PathVariable int idPerson, @PathVariable int idEnseignant, Model model) {
 				
 				//show the conversation
 				//get conversationBy IdExp And IdDest
 				Conversation conv = conversationService.GetConversationByIdExpAndIdDest((long) idPerson, (long) idEnseignant);
 				//System.out.println(conv.toString());
+				
+				
 				
 				model.addAttribute("conversationModel", conv);
 				
@@ -238,7 +240,7 @@ public class EtudiantController {
 				        	return "student/reclamation";
 				        }
 				        
-				        //save the reclamation as message 
+				        // test
 				        System.out.println(reclamation.getTexte());
 				        System.out.println(reclamation.getExpediteurId());
 				        
@@ -249,6 +251,7 @@ public class EtudiantController {
 				        Compte expediteur = compteService.getAccountById(Long.valueOf(reclamation.getExpediteurId()));
 				        Compte destinataire = compteService.getAccountById(Long.valueOf(reclamation.getDestinataireId()));
 				        
+				       
 				        //create a conversation
 				        Conversation conversation = new Conversation();
 				        
@@ -272,8 +275,7 @@ public class EtudiantController {
 				        msg.setExpediteur(expediteur);
 				        msg.setDestinataire(destinataire);
 				        msg.setDateHeure(new Date());
-				        
-				        
+				      
 				        //set the message to the conversation
 				        List<Message> messages = new ArrayList<Message>();
 				        messages.add(msg);
@@ -290,9 +292,9 @@ public class EtudiantController {
 				        model.addAttribute("messageModel", new MessageModel());
 				        
 				     // Mettre le message de succès dans le modèle
-						model.addAttribute("msg", "Opération effectuée avec succès");
+						model.addAttribute("msg", "Operation effectuee avec succes");
 
-				        return "student/reclamation";
+				        return  "redirect:/student/reclamation/" + reclamation.getExpediteurId()+"/" +reclamation.getDestinataireId() ;
 				    }
 
 	

@@ -24,24 +24,70 @@
 	<div>
 		<h3>Student Reclamation</h3>
 	</div>
-	<table class="table">
-		  <thead>
-		    <tr>
-		      <th scope="col">message</th>
-		    </tr>
-		  </thead>
-	 	<c:forEach items="${conversationModel.getMessages()}" var="a">
-				<tr>
-						<td><c:out value="${a.getTexte()}" /></td>
-				</tr>
-			</c:forEach>
-		  </tbody>
-		</table>
 	
 	
+					
+							
 	
-	<c:if test="${not empty msg}">
-			<div class="alert alert-success" role="alert">${msg}</div>
+	<!--  chat  --> 
+	
+		          <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-comment"></span> Messages
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </button>
+          
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="chat">
+                    
+                    <c:forEach items="${conversationModel.getMessages()}" var="a">
+                                	<c:choose>
+									   <c:when test="${a.getExpediteur().getProprietaire().getIdUtilisateur() == idPersonModel}">
+									   <li class="left clearfix"><span class="chat-img pull-left">
+				                            <img src="http://placehold.it/50/55C1E7/fff&text=Me" alt="User Avatar" class="img-circle" />
+				                        </span>
+				                            <div class="chat-body clearfix">
+				                                <div class="header">
+									   	 <strong class="primary-font">Moi</strong> <small class="pull-right text-muted">
+                                       	 <span class="glyphicon glyphicon-time">${a.getDateHeure()}</span></small></c:when> 
+									   
+									   <c:otherwise>
+									   		<li class="left clearfix"><span class="chat-img pull-left">
+				                            <img src="http://placehold.it/50/55C1E7/fff&text=Ad" alt="User Avatar" class="img-circle" />
+				                        </span>
+				                            <div class="chat-body clearfix">
+				                                <div class="header">
+									   	 <strong class="primary-font">Cadre Admin: Mr.${a.getDestinataire().getProprietaire().getNom()}</strong> <small class="pull-right text-muted">
+                                       	 <span class="glyphicon glyphicon-time">${a.getDateHeure()}</span></small></c:otherwise>    
+									</c:choose>
+                                
+                                   
+                                </div>
+                                <p>
+                                   ${a.getTexte()}
+                                </p>
+                            </div>
+                        </li>
+					
+					</c:forEach>
+                       
+                       
+                    </ul>
+                </div>
+               
+            </div>
+        </div>
+    
+
+
+	
+	<!--  /chat  --> 	
+	<c:if test="${not empty param.msg}">
+			<div class="alert alert-success" role="alert">${param.msg}</div>
 		</c:if>
 
 

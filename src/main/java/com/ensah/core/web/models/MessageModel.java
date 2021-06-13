@@ -15,6 +15,7 @@ public class MessageModel {
 	private Long destinataireId;
 	
 	
+	
 	public MessageModel() {
 	}
 
