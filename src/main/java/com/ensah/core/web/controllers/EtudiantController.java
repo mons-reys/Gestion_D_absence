@@ -212,6 +212,11 @@ public class EtudiantController {
 			public String reclamationHandler(@PathVariable int idPerson, @PathVariable int idEnseignant, @PathVariable int idConversation, Model model) {
 				
 				//show the conversation
+				//get conversationBy IdExp And IdDest
+				Conversation conv = conversationService.GetConversationByIdExpAndIdDest((long) idPerson, (long) idEnseignant);
+				//System.out.println(conv.toString());
+				
+				model.addAttribute("conversationModel", conv);
 				
 				
 				

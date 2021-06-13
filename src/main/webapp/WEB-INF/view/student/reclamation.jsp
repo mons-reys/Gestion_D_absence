@@ -24,6 +24,21 @@
 	<div>
 		<h3>Student Reclamation</h3>
 	</div>
+	<table class="table">
+		  <thead>
+		    <tr>
+		      <th scope="col">message</th>
+		    </tr>
+		  </thead>
+	 	<c:forEach items="${conversationModel.getMessages()}" var="a">
+				<tr>
+						<td><c:out value="${a.getTexte()}" /></td>
+				</tr>
+			</c:forEach>
+		  </tbody>
+		</table>
+	
+	
 	
 	<c:if test="${not empty msg}">
 			<div class="alert alert-success" role="alert">${msg}</div>
