@@ -31,15 +31,15 @@
 
 
 		
-		<f:form action="${pageContext.request.contextPath}/student/addReclamation"
+		<f:form action="${pageContext.request.contextPath}/student/addReclamation/"
 			method="POST" modelAttribute="messageModel">
 		
 			
 				<f:hidden path="messageId" />
 
-				<f:hidden path="expediteurId" />
+				<f:hidden path="expediteurId" value="${idPersonModel}" />
 				
-				<f:hidden path="destinataireId" />
+				<f:hidden path="destinataireId"  value="${idAbsenceModel}" />
 				
 				
 				<div class="col">

@@ -141,6 +141,13 @@ public class CompteServiceImpl implements ICompteService {
 		return userDao.getEntityByColValue("Compte", "login", login).get(0);
 	}
 
+
+
+	@Override
+	public Compte getAccountById(Long id) {
+		return userDao.findById(id);
+	}
+
 	
 
 }

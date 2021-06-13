@@ -1,5 +1,8 @@
 package com.ensah.core.web.controllers;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,8 +30,10 @@ import com.ensah.core.bo.Inscription;
 import com.ensah.core.bo.Message;
 import com.ensah.core.bo.TypeSeance;
 import com.ensah.core.bo.Utilisateur;
+import com.ensah.core.services.ICompteService;
 import com.ensah.core.services.IEtudiantService;
 import com.ensah.core.services.IInscriptionService;
+import com.ensah.core.services.IMessageService;
 import com.ensah.core.services.IPersonService;
 import com.ensah.core.services.ITypeSeanceService;
 import com.ensah.core.utils.User;
@@ -52,10 +57,13 @@ public class EtudiantController {
 	private IInscriptionService inscriptionService;
 	
 	@Autowired
-	private IEtudiantService etudiantService;
+	private ICompteService compteService;
 	
 	@Autowired
 	private ITypeSeanceService typeSeanceService;
+	
+	@Autowired
+	private IMessageService messageService;
 	
 	
 	
@@ -214,14 +222,17 @@ public class EtudiantController {
 			@RequestMapping(value = "reclamation/{idPerson}/{idAbsence}", method = RequestMethod.GET)
 			public String reclamationHandler(@PathVariable int idPerson, @PathVariable int idAbsence, Model model) {
 				model.addAttribute("messageModel", new MessageModel());
+				model.addAttribute("idPersonModel", idPerson);
+				model.addAttribute("idAbsenceModel", idAbsence);
+				
 				return "student/reclamation";
 			}
 			
 			
 			
 			 
-			@RequestMapping("addReclamation/{idPerson}/{idAbsence}")
-			 public String addReclamation( @PathVariable int idPerson, @PathVariable int idAbsence , @Valid @ModelAttribute("messageModel") MessageModel reclamation,
+			@RequestMapping("addReclamation")
+			 public String addReclamation(@Valid @ModelAttribute("messageModel") MessageModel reclamation,
 				      Model model,  BindingResult result) {
 				        if (result.hasErrors()) {
 				            return "error";
@@ -229,16 +240,28 @@ public class EtudiantController {
 				        
 				        //save the reclamation as message 
 				        System.out.println(reclamation.getTexte());
+				        System.out.println(reclamation.getExpediteurId());
 				        
-				    
+				        
+				        //get expediteur & destinataire account 
+				        Compte expediteur = compteService.getAccountById(Long.valueOf(reclamation.getExpediteurId()));
+				        Compte destinataire = compteService.getAccountById(Long.valueOf(reclamation.getDestinataireId()));
+				   
+				        //create a new message 
 				        Message msg = new Message();
+				        
 				        //pass data from model to Message class
 				        msg.setTexte(reclamation.getTexte());
-				        //get expiditeur by id 
+				        msg.setExpediteur(expediteur);
+				        msg.setDestinataire(destinataire);
+				        msg.setDateHeure(new Date());
+				        
+				        //save the record
+				        messageService.addMessage(msg);
 				        
 				        
 						
-						System.out.println(msg.getTexte());
+						System.out.println(msg.toString());
 							
 				        model.addAttribute("messageModel", new MessageModel());
 

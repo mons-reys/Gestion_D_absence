@@ -20,4 +20,6 @@ public interface ICompteService {
 	public String createUser(Long idRole, Long idPerson);
 	
 	public ExcelExporter prepareCompteExport(List<Compte> comptes) ;
+	
+	public Compte getAccountById(Long id);
 }
