@@ -33,7 +33,7 @@
 		</s:authorize>
 	</div>
 	
-		nom :   ${userInfos.nom} 	<br>
+	  nom :   ${userInfos.nom} 	<br>
       prénom :   ${userInfos.prenom} 	<br>
       idPersonne :   ${userInfos.idPersonne} 	<br>
       idCompte :   ${userInfos.idCompte} 	<br>

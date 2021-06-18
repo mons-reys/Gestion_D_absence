@@ -14,10 +14,25 @@ public class MessageModel {
 	
 	private Long destinataireId;
 	
-	
-	
+	private Long idConversation;
+
 	public MessageModel() {
 	}
+	
+	public MessageModel(Long idConversation) {
+		this.idConversation  = idConversation;
+	}
+	
+	
+	public Long getIdConversation() {
+		return idConversation;
+	}
+
+	public void setIdConversation(Long idConversation) {
+		this.idConversation = idConversation;
+	}
+
+	
 
 	public MessageModel(String texte) {
 		this.texte = texte;

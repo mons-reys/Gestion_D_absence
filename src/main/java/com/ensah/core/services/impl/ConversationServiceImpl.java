@@ -28,12 +28,10 @@ public class ConversationServiceImpl implements IConversationService {
 	@Override
 	public Conversation getConversationById(Long id) {
 		
-		return null;
+		return conversationDao.findById(id);	
 	}
 	
 	
-	
-
 
 	
 	@Override
@@ -67,6 +65,31 @@ public class ConversationServiceImpl implements IConversationService {
 		
 		return null;
 		
+	}
+
+	@Override
+	public Conversation getConversationByType(String type) {
+		
+		List<Conversation> u = conversationDao.getEntityByColValue("Conversation", "type",type);
+		if (u != null && u.size() != 0) {
+			return conversationDao.getEntityByColValue("Conversation", "type", type).get(0);
+		}
+		
+		return null;
+	}
+
+	@Override
+	public Conversation getConversationByIdCreatorAndType(int idCreator, String string) {
+		//get the conversations created by the student
+		List<Conversation> conversations = this.getConversationByIdCreateur(String.valueOf(idCreator));
+		
+		//filter the conversations 
+		for(Conversation cnv: conversations) {
+				if(cnv.getType().equals("reclamation")) return cnv;
+			
+		}
+		
+		return null;
 	}
 
 	

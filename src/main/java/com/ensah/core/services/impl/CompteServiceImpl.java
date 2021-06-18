@@ -148,6 +148,42 @@ public class CompteServiceImpl implements ICompteService {
 		return userDao.findById(id);
 	}
 
+
+
+	@Override
+	public Compte getAccountByIdRole(Long idRole) {
+		List<Compte> u = userDao.getEntityByColValue("Compte", "idRole", String.valueOf(idRole));
+		if (u != null && u.size() != 0) {
+			return userDao.getEntityByColValue("Compter", "idRole",  String.valueOf(idRole)).get(0);
+		}
+
+		return null;
+	}
+
+
+
+	@Override
+	public Compte getAccountByIdUtilisateur(Long idPerson) {
+		List<Compte> u = userDao.getEntityByColValue("Compte", "idUtilisateur", String.valueOf(idPerson));
+		if (u != null && u.size() != 0) {
+			return userDao.getEntityByColValue("Compter", "idUtilisateur",  String.valueOf(idPerson)).get(0);
+		}
+
+		return null;
+	}
+
+
+
+	@Override
+	public Compte getAccountByLogin(String login) {
+		List<Compte> u = userDao.getEntityByColValue("Compte", "login", String.valueOf(login));
+		if (u != null && u.size() != 0) {
+			return userDao.getEntityByColValue("Compte", "login",  String.valueOf(login)).get(0);
+		}
+
+		return null;
+	}
+
 	
 
 }

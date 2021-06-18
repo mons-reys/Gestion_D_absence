@@ -22,6 +22,10 @@
 
 	<div>
 		<h3>Student Absence</h3>
+		  p:   <c:forEach items="${profModel}" var="p">
+			 ${p}
+	</c:forEach>
+		
 	</div>
 	
 	<div>
@@ -45,6 +49,7 @@
 		  </thead>
 		  <tbody>
 		  <c:forEach items="${absenceModel}" var="a">
+		  
 				<tr>
 					<td><c:out value="${a.idAbsence}" /></td>
 					<td><c:out value="${a.dateHeureDebutAbsence}" /></td>
@@ -57,7 +62,7 @@
 					<td>
 						<ul>
 							<li><a
-								href="${pageContext.request.contextPath}/student/Reclamation/${userInfo.idPersonne}/${a.idAbsence}">Effectuer une reclamation</a></li>
+								href="${pageContext.request.contextPath}/student/reclamation/${userInfo.getIdCompte()}/${a.getObservateur().getIdUtilisateur()}">Effectuer une reclamation</a></li>
 						</ul>
 					</td>
 				</tr>
@@ -77,7 +82,6 @@
 			</c:forEach>
 		</div>
 			
-     
 
 
 <jsp:include page="../fragments/userfooter.jsp" />

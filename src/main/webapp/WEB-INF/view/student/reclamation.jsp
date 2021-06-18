@@ -27,7 +27,9 @@
 	
 	
 					
-							
+		<c:if test="${not empty param.msg}">
+			<div class="alert alert-success" role="alert">${param.msg}</div>
+		</c:if>			
 	
 	<!--  chat  --> 
 	
@@ -46,7 +48,7 @@
                     
                     <c:forEach items="${conversationModel.getMessages()}" var="a">
                                 	<c:choose>
-									   <c:when test="${a.getExpediteur().getProprietaire().getIdUtilisateur() == idPersonModel}">
+									   <c:when test="${a.getExpediteur().getIdCompte() == idPersonModel}">
 									   <li class="left clearfix"><span class="chat-img pull-left">
 				                            <img src="http://placehold.it/50/55C1E7/fff&text=Me" alt="User Avatar" class="img-circle" />
 				                        </span>
@@ -86,9 +88,7 @@
 
 	
 	<!--  /chat  --> 	
-	<c:if test="${not empty param.msg}">
-			<div class="alert alert-success" role="alert">${param.msg}</div>
-		</c:if>
+	
 
 
 		
@@ -97,7 +97,11 @@
 		
 			
 				<f:hidden path="messageId" />
-
+				
+				<f:hidden path="expediteurId" value="${idPersonModel}" />
+				
+				<f:hidden path="idConversation"/>
+				
 				<f:hidden path="expediteurId" value="${idPersonModel}" />
 				
 				<f:hidden path="destinataireId"  value="${idEnseignantModel}" />

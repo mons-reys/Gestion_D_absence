@@ -22,4 +22,10 @@ public interface ICompteService {
 	public ExcelExporter prepareCompteExport(List<Compte> comptes) ;
 	
 	public Compte getAccountById(Long id);
+
+	public Compte getAccountByIdRole(Long idRole);
+	
+	public Compte getAccountByIdUtilisateur(Long idPerson);
+
+	public Compte getAccountByLogin(String string);
 }

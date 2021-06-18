@@ -141,15 +141,27 @@ public class EtudiantController {
 			//charger l'inscription par idEtudiant + annee
 			 Inscription currentInscription = inscriptionService.getInscriptionByIdEtudiantEtAnnee(String.valueOf(idPerson), 2020);
 			 
+			 
+			 
 			//get absence par cette inscription
 			Set<Absence> abs =currentInscription.getAbsences();
-			
 			
 			
 			//passer au view
 			model.addAttribute("absenceModel", abs);
 			
-			
+			//----try to get the teacher 
+			List<Compte> comptes = null;
+			for(Absence ab : abs) {
+				Set<Compte> c = ab.getObservateur().getComptes();
+				for(Compte s: c) {
+					Compte temp = compteService.getAccountByIdRole((long) 2);
+					comptes.add(temp);
+					System.out.println("id de comepte: " + temp.getIdCompte());
+				}
+			}
+			model.addAttribute("profModel", comptes);	
+			//-----------------------------
 			
 			//get all inscriptions
 			 List<Inscription> inscriptions = inscriptionService.getInscriptionByIdEtudiant(String.valueOf(idPerson));
@@ -189,6 +201,7 @@ public class EtudiantController {
 				model.addAttribute("absenceModel", abs);
 				
 				
+				
 				//--pour charger la list des choix des annees d'absence---
 				//get all inscriptions
 				 List<Inscription> inscriptions = inscriptionService.getInscriptionByIdEtudiant(String.valueOf(idPerson));
@@ -201,6 +214,8 @@ public class EtudiantController {
 				//charger les donnee de l'utilisateur connecter pour reutiliser dans les liens des annees
 				User user = new User(this.httpSession);
 				UserAndAccountInfos infoUser = user.getUserAccount();
+				
+				
 				model.addAttribute("userInfo", infoUser);
 					
 				return "student/myAbsence";
@@ -211,18 +226,44 @@ public class EtudiantController {
 			@RequestMapping(value = "reclamation/{idPerson}/{idEnseignant}", method = RequestMethod.GET)
 			public String reclamationHandler(@PathVariable int idPerson, @PathVariable int idEnseignant, Model model) {
 				
+				//get compte
+				//Compte compte = compteService.getAccountById((long) idPerson);
+				//List<Conversation> conv = compte.getConversationsCrees();
+
+				//Compte creator = compteService.getAccountByIdUtilisateur((long) idPerson);
+				Compte creator = compteService.getAccountById((long) idPerson);
+
 				//show the conversation
-				//get conversationBy IdExp And IdDest
-				Conversation conv = conversationService.GetConversationByIdExpAndIdDest((long) idPerson, (long) idEnseignant);
-				//System.out.println(conv.toString());
+				//get conversationBy IdExp And IdDest conversationService.GetConversationByIdExpAndIdDest((long) idPerson, (long) idEnseignant);
+				 //check if the conversation null to create new one 
+		        
+				Conversation conv = conversationService.getConversationByIdCreatorAndType(idPerson, "reclamation");
+				System.out.println("titre : "  + conv.getTitre());
+				
+				if(conv == null) {
+					 conv = new Conversation();
+		        	//set values for the conversation
+		        	conv.setEtat(0);
+		        	conv.setTitre("reclamation d'absence");
+		        	conv.setType("reclamation");
+		        	conv.setCreateurConversation(creator);
+		        	//save the conversation
+		        	conversationService.addConversation(conv);
+				}
+		        	//System.out.println(conv.toString());
+					model.addAttribute("conversationModel", conv);
+
+			
+		        
 				
 				
 				
-				model.addAttribute("conversationModel", conv);
+				MessageModel messageModel = new MessageModel();
+				messageModel.setIdConversation(conv.getIdConversation());
+				messageModel.setExpediteurId((long) idPerson);
 				
 				
-				
-				model.addAttribute("messageModel", new MessageModel());
+				model.addAttribute("messageModel", messageModel);
 				model.addAttribute("idPersonModel", idPerson);
 				model.addAttribute("idEnseignantModel", idEnseignant);
 				
@@ -241,32 +282,36 @@ public class EtudiantController {
 				        }
 				        
 				        // test
-				        System.out.println(reclamation.getTexte());
-				        System.out.println(reclamation.getExpediteurId());
+				        //System.out.println(reclamation.getTexte());
+				        //System.out.println(reclamation.getExpediteurId());
 				        
 				        
 				        
 				        
 				        //get expediteur & destinataire account 
 				        Compte expediteur = compteService.getAccountById(Long.valueOf(reclamation.getExpediteurId()));
-				        Compte destinataire = compteService.getAccountById(Long.valueOf(reclamation.getDestinataireId()));
+				        Compte destinataire = compteService.getAccountByLogin("cadre_admin");
 				        
 				       
 				        //create a conversation
-				        Conversation conversation = new Conversation();
+						//Conversation conversation = conversationService.GetConversationByIdExpAndIdDest((long) reclamation.getExpediteurId(), (long) reclamation.getDestinataireId());
+
+				        Conversation conversation = conversationService.getConversationById(reclamation.getIdConversation());
+				        System.out.println("le id: " + reclamation.getIdConversation());
+				        System.out.println("passed");
 				        
-				        //set values for the conversation
-				        conversation.setEtat(0);
-				        conversation.setCreateurConversation(expediteur);
-				        conversation.setTitre("reclamation d'absence");
-				        conversation.setType("reclamation");
 				        
-				        //add participant to the list 
-				        List<Compte> participants = new ArrayList<Compte>();
-				        participants.add(expediteur);
-				        participants.add(destinataire);
-				        conversation.setParticipant(participants);
+				      
+					        
+					        
+				        	conversation.setCreateurConversation(expediteur);
+					      //add participant to the list 
+					        List<Compte> participants = new ArrayList<Compte>();
+					        participants.add(expediteur);
+					        participants.add(destinataire);
+					        conversation.setParticipant(participants);
 				        
+				       
 				        //create a new message 
 				        Message msg = new Message();
 				        
@@ -275,6 +320,7 @@ public class EtudiantController {
 				        msg.setExpediteur(expediteur);
 				        msg.setDestinataire(destinataire);
 				        msg.setDateHeure(new Date());
+				        msg.setConversation(conversation);
 				      
 				        //set the message to the conversation
 				        List<Message> messages = new ArrayList<Message>();
@@ -289,8 +335,6 @@ public class EtudiantController {
 
 						System.out.println(msg.toString());
 							
-				        model.addAttribute("messageModel", new MessageModel());
-				        
 				     // Mettre le message de succès dans le modèle
 						model.addAttribute("msg", "Operation effectuee avec succes");
 
